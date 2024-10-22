@@ -1,0 +1,10 @@
+"0","```r
+
+ian %>% 
+  filter(station == \"Old Port Tampa\") %>% 
+  select(date_time, prediction, water_level) %>% 
+  pivot_longer(cols = c(\"prediction\", \"water_level\"), names_to = \"type\", values_to = \"mhhw\") %>% 
+  filter(date_time >= \"2022-09-28 00:00:00\") %>% 
+  ggplot(aes(x = date_time, y = mhhw, color = type)) +
+    geom_line()
+```"

@@ -1,0 +1,8 @@
+"0","helene %>% "
+"0","  filter(station == ""Old Port Tampa"") %>% "
+"0","  select(date_time, water_level, prediction) %>% "
+"0","  pivot_longer(cols = c(water_level, prediction), "
+"0","               names_to = ""type"","
+"0","               values_to = ""water_level"") %>% "
+"0","  ggplot(aes(x = date_time, y = water_level, color = type)) +"
+"0","  geom_line()"

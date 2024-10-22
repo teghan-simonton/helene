@@ -1,0 +1,5 @@
+"0","stpete <- read_csv(""https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240705&end_date=20240805&station=8726520&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv"") %>% clean_names()
+"
+"2","Error in (function (con, what, n = 1L, size = NA_integer_, signed = TRUE,  : 
+  Failed writing received data to disk/application
+"

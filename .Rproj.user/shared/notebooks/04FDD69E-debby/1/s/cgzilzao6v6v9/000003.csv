@@ -1,0 +1,6 @@
+"0","```r
+
+debby %>% 
+  filter(station == \"Clearwater Beach\") %>% 
+  arrange(desc(water_level)) #Clearwater Beach was 2.461 at 1:42 this morning -- makes sense it would be earlier as storm moves in?
+```"

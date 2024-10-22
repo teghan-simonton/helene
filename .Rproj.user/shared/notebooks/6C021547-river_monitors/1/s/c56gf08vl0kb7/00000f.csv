@@ -1,0 +1,16 @@
+"0","### dataframe of available sites"
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","florida_sites <- whatNWISsites(stateCd = ""FL"", parameterCd = ""00065"") %>%"
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","  st_as_sf(coords=c(""dec_long_va"",""dec_lat_va""),"
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","           crs=4326) "
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"

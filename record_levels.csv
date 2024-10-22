@@ -1,0 +1,8 @@
+source,date_time,water_level,sigma,o_or_i_for_verified,f,r,l,quality,prediction,station,storm,difference
+debby,2024-08-05T04:06:00Z,2.972,0.118,0,0,0,0,v,-0.651,Old Port Tampa,Debby,3.623
+december,2023-12-17T05:48:00Z,3.599,0.059,0,0,0,0,v,-0.349,East Bay Tampa,December Storm,3.9480000000000004
+eta,2020-11-12T00:00:00Z,3.868,0.085,0,0,0,0,v,-0.161,Old Port Tampa,Eta,4.029
+helene,2024-09-27T00:42:00Z,7.201,0.049,1,0,0,1,p,-0.593,East Bay Tampa,Helene,7.794
+ian,2022-09-26T12:48:00Z,1.46,0.033,0,0,0,0,v,0.327,Clearwater Beach,Ian,1.133
+idalia,2023-08-30T07:30:00Z,4.564,0.069,0,0,0,1,v,-1.138,East Bay Tampa,Idalia,5.702
+michael,2018-10-09T23:48:00Z,3.625,0.764,0,0,0,0,v,0.267,Clearwater Beach,Michael,3.358

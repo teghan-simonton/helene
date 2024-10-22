@@ -1,0 +1,140 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+#install.packages("dataRetrieval")
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(dataRetrieval)
+library(sf)
+library(mapview)
+
+library(remotes)
+#install_github("DOI-USGS/dataRetrieval",
+               #build_vignettes = TRUE, 
+               #build_opts = c("--no-resave-data",
+                             # "--no-manual"))
+
+options(scipen = 999)
+```
+
+```{r}
+### dataframe of available sites
+florida_sites <- whatNWISsites(stateCd = "FL", parameterCd = "00065") %>%
+  st_as_sf(coords=c("dec_long_va","dec_lat_va"),
+           crs=4326) 
+```
+
+```{r}
+#list all gages we need for this project. I'm basically pulling everything I can find. May need to get more once we know what regions to focus in?
+
+gagenames <- c("02299950", "02300033", "02300042", "02300075", "02308950", "02308889", "02308889", "02308861", "02307780", "02309110", "02309200", "02307668", "02307669", "02307674", "02309415", "02309421", "02309425", "02309447", "02307496", "02307445", "02307362", "02307359", "02307032", "02307000", "02306647", "023066535", "02306500", "02306774", "02306950", "280311082282601", "02305851", "02306000", "02304000", "02304500", "02301750", "02301740", "02303205", "02301500", "02300700", "02301300", "02310000", "02310300", "02310322", "02309740", "02309848", "02310288", "02310356", "02310280", "02298608")
+
+```
+```{r}
+florida_sites <- florida_sites %>% 
+  semi_join(as.data.frame(gagenames), by = c("site_no" = "gagenames"))
+```
+
+
+```{r}
+#Helene data -- grabbing entire month of September because flooding early in the month could screw up estimates
+
+startDate <- "2024-09-01"
+endDate <- "2024-09-30"
+
+helene <- readNWISdata(sites = gagenames,
+                            service = "iv", 
+                            ### param for gage height - feet
+                            parameterCd = "00065", 
+                            startDate = startDate,
+                            endDate = endDate) 
+```
+
+```{r}
+#testing a station somewhere on Alafia
+
+helene %>% 
+  filter(site_no == "02301300") %>% 
+  ggplot(aes(x = dateTime, y = X_00065_00000)) +
+  geom_line()
+
+#booker creek?
+helene %>% 
+  filter(site_no == "02307362") %>% 
+  ggplot(aes(x = dateTime, y = X_00065_00000)) +
+  geom_line()
+
+#sulphur springs?
+helene %>% 
+  filter(site_no == "02306000") %>% 
+  ggplot(aes(x = dateTime, y = X_00065_00000)) +
+  geom_line()
+
+```
+
+```{r}
+#pull daily Q and summary averages. Want to be able to see if levels are above average and/or above highest percentile
+
+dailyQ <- read_csv("dailyQ.csv") %>% 
+  rename("average" = `median(rollMean)`)
+
+summaryQ <- read_csv("summaryQ.csv") 
+```
+```{r}
+#add day of year to helene so we can compare averages
+
+helene <- helene %>% 
+  mutate(day.of.year = as.numeric(strftime(dateTime, format="%j")))
+
+helene %>% 
+  group_by(site_no) %>% 
+  filter(dateTime == max(dateTime)) %>% #grab most recent measurement
+  ungroup() %>% 
+  left_join(dailyQ, by = c("site_no", "day.of.year")) %>% distinct() %>% 
+  left_join(select(summaryQ, site_no, day.of.year, p75), by = c("site_no", "day.of.year")) %>% distinct() %>% 
+  filter(average < X_00065_00000) %>% 
+  mutate(difference = X_00065_00000-p75) %>% 
+  arrange(desc(difference))
+```
+
+```{r}
+helene %>% 
+  filter(site_no == "02301300") %>% 
+  ggplot(aes(x = dateTime, y = X_00065_00000)) +
+  geom_line()
+```
+```{r}
+test <- helene %>% 
+  group_by(site_no) %>% 
+  filter(dateTime == max(dateTime)) %>% #grab most recent measurement
+  ungroup() %>% 
+  left_join(dailyQ, by = c("site_no", "day.of.year")) %>% distinct() %>% 
+  left_join(select(summaryQ, site_no, day.of.year, p75), by = c("site_no", "day.of.year")) %>% distinct() %>% 
+  filter(average < X_00065_00000) %>% 
+  mutate(difference = X_00065_00000-p75) %>% 
+  arrange(desc(difference)) %>% 
+  head(5) %>% 
+  left_join(select(florida_sites, site_no, geometry), by = "site_no") %>% 
+  st_as_sf
+
+mapview(test)
+```
+
+Pinellas County creeks and rivers swelled Thursday evening, as Hurricane Helene brought floods and the highest storm surge on record in the region.
+
+Near tktktk, tktktk was about tktk feet higher than its normal level, data from the U.S. Geological Survey shows. 
+
+
+
+```{r}
+#map all the gages I have here
+
+gages <- florida_sites %>% 
+  semi_join(as.data.frame(gagenames), by = c("site_no" = "gagenames"))
+
+mapview(gages)
+```

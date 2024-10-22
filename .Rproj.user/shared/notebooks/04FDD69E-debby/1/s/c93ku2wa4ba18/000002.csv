@@ -1,0 +1,150 @@
+"0","```r
+#Grabbing dates Aug 5 - Sept 5 so we can see post-storm as well
+
+stpete <- read_csv(\"https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230805&end_date=20230905&station=8726520&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv\") %>% clean_names()
+```"
+"1","Rows: 7680 Columns: 8── Column specification ──────────────────────────────────────────────────────────────────────
+Delimiter: \",\"
+chr  (1): Quality
+dbl  (6): Water Level, Sigma, O or I (for verified), F, R, L
+dttm (1): Date Time
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"
+"0","```r
+stpete_prediction <- read_csv(\"https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230805&end_date=20230905&station=8726520&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv\") %>% clean_names()
+```"
+"1","Rows: 7680 Columns: 2── Column specification ──────────────────────────────────────────────────────────────────────
+Delimiter: \",\"
+dbl  (1): Prediction
+dttm (1): Date Time
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"
+"0","```r
+stpete <- stpete %>% 
+  right_join(stpete_prediction, by = \"date_time\") %>% 
+  mutate(station = \"St. Pete\",
+         storm = \"Idalia\")
+
+#Old Port Tampa
+
+oldporttampa <- read_csv(\"https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230805&end_date=20230905&station=8726607&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv\") %>% clean_names()
+```"
+"1","Rows: 7680 Columns: 8── Column specification ──────────────────────────────────────────────────────────────────────
+Delimiter: \",\"
+chr  (1): Quality
+dbl  (6): Water Level, Sigma, O or I (for verified), F, R, L
+dttm (1): Date Time
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"
+"0","```r
+oldporttampa_prediction <- read_csv(\"https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230805&end_date=20230905&station=8726607&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv\") %>% clean_names()
+```"
+"1","Rows: 7680 Columns: 2── Column specification ──────────────────────────────────────────────────────────────────────
+Delimiter: \",\"
+dbl  (1): Prediction
+dttm (1): Date Time
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"
+"0","```r
+oldporttampa <- oldporttampa %>% 
+  right_join(oldporttampa_prediction, by = \"date_time\") %>% 
+  mutate(station = \"Old Port Tampa\",
+         storm = \"Idalia\")
+
+#Port Manatee
+
+portmanatee <- read_csv(\"https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230805&end_date=20230905&station=8726384&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv\") %>% clean_names()
+```"
+"1","Rows: 7680 Columns: 8── Column specification ──────────────────────────────────────────────────────────────────────
+Delimiter: \",\"
+chr  (1): Quality
+dbl  (6): Water Level, Sigma, O or I (for verified), F, R, L
+dttm (1): Date Time
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"
+"0","```r
+portmanatee_prediction <- read_csv(\"https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230805&end_date=20230905&station=8726384&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv\") %>% clean_names()
+```"
+"1","Rows: 7680 Columns: 2── Column specification ──────────────────────────────────────────────────────────────────────
+Delimiter: \",\"
+dbl  (1): Prediction
+dttm (1): Date Time
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"
+"0","```r
+portmanatee <- portmanatee %>% 
+  right_join(portmanatee_prediction, by = \"date_time\") %>% 
+  mutate(station = \"Port Manatee\",
+         storm = \"Idalia\")
+
+#Clearwater Beach
+
+clearwater <- read_csv(\"https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230805&end_date=20230905&station=8726724&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv\") %>% clean_names()
+```"
+"1","Rows: 7680 Columns: 8── Column specification ──────────────────────────────────────────────────────────────────────
+Delimiter: \",\"
+chr  (1): Quality
+dbl  (6): Water Level, Sigma, O or I (for verified), F, R, L
+dttm (1): Date Time
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"
+"0","```r
+clearwater_prediction <- read_csv(\"https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230805&end_date=20230905&station=8726724&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv\") %>% clean_names()
+```"
+"1","Rows: 7680 Columns: 2── Column specification ──────────────────────────────────────────────────────────────────────
+Delimiter: \",\"
+dbl  (1): Prediction
+dttm (1): Date Time
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"
+"0","```r
+clearwater <- clearwater %>% 
+  right_join(clearwater_prediction, by = \"date_time\") %>% 
+  mutate(station = \"Clearwater Beach\",
+         storm = \"Idalia\")
+
+#East Bay Tampa
+
+eastbay <- read_csv(\"https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230805&end_date=20230905&station=8726674&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv\") %>% clean_names()
+```"
+"1","Rows: 7680 Columns: 8── Column specification ──────────────────────────────────────────────────────────────────────
+Delimiter: \",\"
+chr  (1): Quality
+dbl  (6): Water Level, Sigma, O or I (for verified), F, R, L
+dttm (1): Date Time
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"
+"0","```r
+eastbay_prediction <- read_csv(\"https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230805&end_date=20230905&station=8726674&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv\") %>% clean_names()
+```"
+"1","Rows: 7680 Columns: 2── Column specification ──────────────────────────────────────────────────────────────────────
+Delimiter: \",\"
+dbl  (1): Prediction
+dttm (1): Date Time
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"
+"0","```r
+eastbay <- eastbay %>% 
+  right_join(eastbay_prediction, by = \"date_time\") %>% 
+  mutate(station = \"East Bay Tampa\",
+         storm = \"Idalia\")
+
+
+#Combine gauge data for idalia
+
+idalia <- bind_rows(stpete, oldporttampa, clearwater, eastbay, portmanatee)
+
+#clean up
+
+rm(stpete, oldporttampa, clearwater, stpete_prediction, oldporttampa_prediction, clearwater_prediction, eastbay, eastbay_prediction, portmanatee, portmanatee_prediction)
+```"

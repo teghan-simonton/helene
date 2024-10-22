@@ -1,0 +1,52 @@
+"0","#install.packages(""dataRetrieval"")"
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","library(tidyverse)"
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","library(lubridate)"
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","library(ggplot2)"
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","library(dataRetrieval)"
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","library(sf)"
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","library(mapview)"
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","library(remotes)"
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","#install_github(""DOI-USGS/dataRetrieval"","
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","               #build_vignettes = TRUE, "
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","               #build_opts = c(""--no-resave-data"","
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","                             # ""--no-manual""))"
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","options(scipen = 999)"
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"

@@ -1,0 +1,9 @@
+"0","```r
+#Combine gauge data for debby
+
+debby <- bind_rows(stpete, oldporttampa, clearwater, eastbay, portmanatee)
+
+#clean up
+
+rm(stpete, oldporttampa, clearwater, stpete_prediction, oldporttampa_prediction, clearwater_prediction, eastbay, eastbay_prediction, portmanatee, portmanatee_prediction)
+```"

@@ -1,0 +1,790 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+library(tidyverse)
+library(janitor)
+library(ggplot2)
+
+```
+
+
+```{r}
+#download current forcast and water levels ahead of Hurricane Helene for the main gauges:
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240923&end_date=20240927&station=8726520&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/stpete.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240923&end_date=20240927&station=8726520&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/stpete_prediction.csv") 
+
+stpete <- read_csv("downloads/stpete.csv") %>% clean_names()
+
+stpete_prediction <- read_csv("downloads/stpete_prediction.csv") %>% clean_names()
+
+stpete <- stpete %>% 
+  right_join(stpete_prediction, by = "date_time") %>% 
+  mutate(station = "St. Pete",
+         storm = "Helene")
+
+#Old Port Tampa
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240923&end_date=20240927&station=8726607&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/opt.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240923&end_date=20240927&station=8726607&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/opt_prediction.csv") 
+
+opt <- read_csv("downloads/opt.csv") %>% clean_names()
+
+opt_prediction <- read_csv("downloads/opt_prediction.csv") %>% clean_names()
+
+opt <- opt %>% 
+  right_join(opt_prediction, by = "date_time") %>% 
+  mutate(station = "Old Port Tampa",
+         storm = "Helene")
+
+#Port Manatee
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240923&end_date=20240927&station=8726384&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/portmanatee.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240923&end_date=20240927&station=8726384&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/portmanatee_prediction.csv") 
+
+portmanatee <- read_csv("downloads/portmanatee.csv") %>% clean_names()
+
+portmanatee_prediction <- read_csv("downloads/portmanatee_prediction.csv") %>% clean_names()
+
+portmanatee <- portmanatee %>% 
+  right_join(portmanatee_prediction, by = "date_time") %>% 
+  mutate(station = "Port Manatee",
+         storm = "Helene")
+
+#Clearwater Beach
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240923&end_date=20240927&station=8726724&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/clearwater.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240923&end_date=20240927&station=8726724&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/clearwater_prediction.csv") 
+
+clearwater <- read_csv("downloads/clearwater.csv") %>% clean_names()
+
+clearwater_prediction <- read_csv("downloads/clearwater_prediction.csv") %>% clean_names()
+
+clearwater <- clearwater %>% 
+  right_join(clearwater_prediction, by = "date_time") %>% 
+  mutate(station = "Clearwater Beach",
+         storm = "Helene")
+
+#East Bay Tampa
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240923&end_date=20240927&station=8726674&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/ebt.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240923&end_date=20240927&station=8726674&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/ebt_prediction.csv") 
+
+ebt <- read_csv("downloads/ebt.csv") %>% clean_names()
+
+ebt_prediction <- read_csv("downloads/ebt_prediction.csv") %>% clean_names()
+
+ebt <- ebt %>% 
+  right_join(ebt_prediction, by = "date_time") %>% 
+  mutate(station = "East Bay Tampa",
+         storm = "Helene")
+
+#combine all gauge info
+
+helene <- bind_rows(stpete, opt, clearwater, ebt, portmanatee)
+
+#clean up
+
+rm(stpete, opt, clearwater, ebt, portmanatee, stpete_prediction, opt_prediction, clearwater_prediction, ebt_prediction, portmanatee_prediction)
+```
+
+```{r}
+#test
+
+helene %>% 
+  ggplot(aes(x = date_time, y = prediction, color = station)) +
+  geom_line()
+
+#preditions are all following similar pattern
+```
+
+
+
+#Note: all data imported with these parameters: product = water_level; datum = MHHW; time_zone = lst_ldt; dates are the storm and a month prior for debby; before and after for all other storms
+
+```{r}
+#import tidal gauge data for debby 
+
+#st pete
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240801&end_date=20240807&station=8726520&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/stpete.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240801&end_date=20240807&station=8726520&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/stpete_prediction.csv")
+
+stpete <- read_csv("downloads/stpete.csv") %>% clean_names()
+
+stpete_prediction <- read_csv("downloads/stpete_prediction.csv") %>% clean_names()
+
+stpete <- stpete %>% 
+  right_join(stpete_prediction, by = "date_time") %>% 
+  mutate(station = "St. Pete",
+         storm = "Debby")
+
+#old port tampa
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240801&end_date=20240807&station=8726607&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/opt.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240801&end_date=20240807&station=8726607&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/opt_prediction.csv")
+
+opt <- read_csv("downloads/opt.csv") %>% clean_names()
+
+opt_prediction <- read_csv("downloads/opt_prediction.csv") %>% clean_names()
+
+opt <- opt %>% 
+  right_join(opt_prediction, by = "date_time") %>% 
+  mutate(station = "Old Port Tampa",
+         storm = "Debby")
+
+#port manatee
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240801&end_date=20240807&station=8726384&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/portmanatee.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240801&end_date=20240807&station=8726384&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/portmanatee_prediction.csv") 
+
+portmanatee <- read_csv("downloads/portmanatee.csv") %>% clean_names()
+
+portmanatee_prediction <- read_csv("downloads/portmanatee_prediction.csv") %>% clean_names()
+
+portmanatee <- portmanatee %>% 
+  right_join(portmanatee_prediction, by = "date_time") %>% 
+  mutate(station = "Port Manatee",
+         storm = "Debby")
+
+#Clearwater Beach
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240801&end_date=20240807&station=8726724&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/clearwater.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240801&end_date=20240807&station=8726724&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/clearwater_prediction.csv") 
+
+clearwater <- read_csv("downloads/clearwater.csv") %>% clean_names()
+
+clearwater_prediction <- read_csv("downloads/clearwater_prediction.csv") %>% clean_names()
+
+clearwater <- clearwater %>% 
+  right_join(clearwater_prediction, by = "date_time") %>% 
+  mutate(station = "Clearwater Beach",
+         storm = "Debby")
+
+#East Bay Tampa
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240801&end_date=20240807&station=8726674&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/ebt.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240801&end_date=20240807&station=8726674&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/ebt_prediction.csv") 
+
+ebt <- read_csv("downloads/ebt.csv") %>% clean_names()
+
+ebt_prediction <- read_csv("downloads/ebt_prediction.csv") %>% clean_names()
+
+ebt <- ebt %>% 
+  right_join(ebt_prediction, by = "date_time") %>% 
+  mutate(station = "East Bay Tampa",
+         storm = "Debby")
+
+#combine all gauge info
+
+debby <- bind_rows(stpete, opt, clearwater, ebt, portmanatee)
+
+#clean up
+
+rm(stpete, opt, clearwater, ebt, portmanatee, stpete_prediction, opt_prediction, clearwater_prediction, ebt_prediction, portmanatee_prediction)
+```
+
+```{r}
+#import tidal gauge data for idalia 
+
+#st pete
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230828&end_date=20230905&station=8726520&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/stpete.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230828&end_date=20230905&station=8726520&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/stpete_prediction.csv")
+
+stpete <- read_csv("downloads/stpete.csv") %>% clean_names()
+
+stpete_prediction <- read_csv("downloads/stpete_prediction.csv") %>% clean_names()
+
+stpete <- stpete %>% 
+  right_join(stpete_prediction, by = "date_time") %>% 
+  mutate(station = "St. Pete",
+         storm = "Idalia")
+
+#old port tampa
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230828&end_date=20230905&station=8726607&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/opt.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230828&end_date=20230905&station=8726607&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/opt_prediction.csv")
+
+opt <- read_csv("downloads/opt.csv") %>% clean_names()
+
+opt_prediction <- read_csv("downloads/opt_prediction.csv") %>% clean_names()
+
+opt <- opt %>% 
+  right_join(opt_prediction, by = "date_time") %>% 
+  mutate(station = "Old Port Tampa",
+         storm = "Idalia")
+
+#port manatee
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230828&end_date=20230905&station=8726384&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/portmanatee.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230828&end_date=20230905&station=8726384&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/portmanatee_prediction.csv") 
+
+portmanatee <- read_csv("downloads/portmanatee.csv") %>% clean_names()
+
+portmanatee_prediction <- read_csv("downloads/portmanatee_prediction.csv") %>% clean_names()
+
+portmanatee <- portmanatee %>% 
+  right_join(portmanatee_prediction, by = "date_time") %>% 
+  mutate(station = "Port Manatee",
+         storm = "Idalia")
+
+#Clearwater Beach
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230828&end_date=20230905&station=8726724&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/clearwater.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230828&end_date=20230905&station=8726724&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/clearwater_prediction.csv") 
+
+clearwater <- read_csv("downloads/clearwater.csv") %>% clean_names()
+
+clearwater_prediction <- read_csv("downloads/clearwater_prediction.csv") %>% clean_names()
+
+clearwater <- clearwater %>% 
+  right_join(clearwater_prediction, by = "date_time") %>% 
+  mutate(station = "Clearwater Beach",
+         storm = "Idalia")
+
+#East Bay Tampa
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230828&end_date=20230905&station=8726674&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/ebt.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20230828&end_date=20230905&station=8726674&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/ebt_prediction.csv") 
+
+ebt <- read_csv("downloads/ebt.csv") %>% clean_names()
+
+ebt_prediction <- read_csv("downloads/ebt_prediction.csv") %>% clean_names()
+
+ebt <- ebt %>% 
+  right_join(ebt_prediction, by = "date_time") %>% 
+  mutate(station = "East Bay Tampa",
+         storm = "Idalia")
+
+#combine all gauge info
+
+idalia <- bind_rows(stpete, opt, clearwater, ebt, portmanatee)
+
+#clean up
+
+rm(stpete, opt, clearwater, ebt, portmanatee, stpete_prediction, opt_prediction, clearwater_prediction, ebt_prediction, portmanatee_prediction)
+```
+
+
+```{r}
+#import tidal gauge data for december storm 
+
+#st pete
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20231215&end_date=20231222&station=8726520&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/stpete.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20231215&end_date=20231222&station=8726520&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/stpete_prediction.csv")
+
+stpete <- read_csv("downloads/stpete.csv") %>% clean_names()
+
+stpete_prediction <- read_csv("downloads/stpete_prediction.csv") %>% clean_names()
+
+stpete <- stpete %>% 
+  right_join(stpete_prediction, by = "date_time") %>% 
+  mutate(station = "St. Pete",
+         storm = "December Storm")
+
+#old port tampa
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20231215&end_date=20231222&station=8726607&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/opt.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20231215&end_date=20231222&station=8726607&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/opt_prediction.csv")
+
+opt <- read_csv("downloads/opt.csv") %>% clean_names()
+
+opt_prediction <- read_csv("downloads/opt_prediction.csv") %>% clean_names()
+
+opt <- opt %>% 
+  right_join(opt_prediction, by = "date_time") %>% 
+  mutate(station = "Old Port Tampa",
+         storm = "December Storm")
+
+#port manatee
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20231215&end_date=20231222&station=8726384&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/portmanatee.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20231215&end_date=20231222&station=8726384&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/portmanatee_prediction.csv") 
+
+portmanatee <- read_csv("downloads/portmanatee.csv") %>% clean_names()
+
+portmanatee_prediction <- read_csv("downloads/portmanatee_prediction.csv") %>% clean_names()
+
+portmanatee <- portmanatee %>% 
+  right_join(portmanatee_prediction, by = "date_time") %>% 
+  mutate(station = "Port Manatee",
+         storm = "December Storm")
+
+#Clearwater Beach
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20231215&end_date=20231222&station=8726724&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/clearwater.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20231215&end_date=20231222&station=8726724&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/clearwater_prediction.csv") 
+
+clearwater <- read_csv("downloads/clearwater.csv") %>% clean_names()
+
+clearwater_prediction <- read_csv("downloads/clearwater_prediction.csv") %>% clean_names()
+
+clearwater <- clearwater %>% 
+  right_join(clearwater_prediction, by = "date_time") %>% 
+  mutate(station = "Clearwater Beach",
+         storm = "December Storm")
+
+#East Bay Tampa
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20231215&end_date=20231222&station=8726674&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/ebt.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20231215&end_date=20231222&station=8726674&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/ebt_prediction.csv") 
+
+ebt <- read_csv("downloads/ebt.csv") %>% clean_names()
+
+ebt_prediction <- read_csv("downloads/ebt_prediction.csv") %>% clean_names()
+
+ebt <- ebt %>% 
+  right_join(ebt_prediction, by = "date_time") %>% 
+  mutate(station = "East Bay Tampa",
+         storm = "December Storm")
+
+#combine all gauge info
+
+december <- bind_rows(stpete, opt, clearwater, ebt, portmanatee)
+
+#clean up
+
+rm(stpete, opt, clearwater, ebt, portmanatee, stpete_prediction, opt_prediction, clearwater_prediction, ebt_prediction, portmanatee_prediction)
+```
+
+
+```{r}
+#import tidal gauge data for ian
+
+#st pete
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20220925&end_date=20221002&station=8726520&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/stpete.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20220925&end_date=20221002&station=8726520&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/stpete_prediction.csv")
+
+stpete <- read_csv("downloads/stpete.csv") %>% clean_names()
+
+stpete_prediction <- read_csv("downloads/stpete_prediction.csv") %>% clean_names()
+
+stpete <- stpete %>% 
+  right_join(stpete_prediction, by = "date_time") %>% 
+  mutate(station = "St. Pete",
+         storm = "Ian")
+
+#old port tampa
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20220925&end_date=20221002&station=8726607&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/opt.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20220925&end_date=20221002&station=8726607&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/opt_prediction.csv")
+
+opt <- read_csv("downloads/opt.csv") %>% clean_names()
+
+opt_prediction <- read_csv("downloads/opt_prediction.csv") %>% clean_names()
+
+opt <- opt %>% 
+  right_join(opt_prediction, by = "date_time") %>% 
+  mutate(station = "Old Port Tampa",
+         storm = "Ian")
+
+#port manatee
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20220925&end_date=20221002&station=8726384&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/portmanatee.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20220925&end_date=20221002&station=8726384&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/portmanatee_prediction.csv") 
+
+portmanatee <- read_csv("downloads/portmanatee.csv") %>% clean_names()
+
+portmanatee_prediction <- read_csv("downloads/portmanatee_prediction.csv") %>% clean_names()
+
+portmanatee <- portmanatee %>% 
+  right_join(portmanatee_prediction, by = "date_time") %>% 
+  mutate(station = "Port Manatee",
+         storm = "Ian")
+
+#Clearwater Beach
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20220925&end_date=20221002&station=8726724&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/clearwater.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20220925&end_date=20221002&station=8726724&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/clearwater_prediction.csv") 
+
+clearwater <- read_csv("downloads/clearwater.csv") %>% clean_names()
+
+clearwater_prediction <- read_csv("downloads/clearwater_prediction.csv") %>% clean_names()
+
+clearwater <- clearwater %>% 
+  right_join(clearwater_prediction, by = "date_time") %>% 
+  mutate(station = "Clearwater Beach",
+         storm = "Ian")
+
+#East Bay Tampa
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20220925&end_date=20221002&station=8726674&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/ebt.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20220925&end_date=20221002&station=8726674&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/ebt_prediction.csv") 
+
+ebt <- read_csv("downloads/ebt.csv") %>% clean_names()
+
+ebt_prediction <- read_csv("downloads/ebt_prediction.csv") %>% clean_names()
+
+ebt <- ebt %>% 
+  right_join(ebt_prediction, by = "date_time") %>% 
+  mutate(station = "East Bay Tampa",
+         storm = "Ian")
+
+#combine all gauge info
+
+ian <- bind_rows(stpete, opt, clearwater, ebt, portmanatee)
+
+#clean up
+
+rm(stpete, opt, clearwater, ebt, portmanatee, stpete_prediction, opt_prediction, clearwater_prediction, ebt_prediction, portmanatee_prediction)
+```
+
+```{r}
+#import tidal gauge data for eta
+
+#st pete
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20201109&end_date=20201115&station=8726520&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/stpete.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20201109&end_date=20201115&station=8726520&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/stpete_prediction.csv")
+
+stpete <- read_csv("downloads/stpete.csv") %>% clean_names()
+
+stpete_prediction <- read_csv("downloads/stpete_prediction.csv") %>% clean_names()
+
+stpete <- stpete %>% 
+  right_join(stpete_prediction, by = "date_time") %>% 
+  mutate(station = "St. Pete",
+         storm = "Eta")
+
+#old port tampa
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20201109&end_date=20201115&station=8726607&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/opt.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20201109&end_date=20201115&station=8726607&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/opt_prediction.csv")
+
+opt <- read_csv("downloads/opt.csv") %>% clean_names()
+
+opt_prediction <- read_csv("downloads/opt_prediction.csv") %>% clean_names()
+
+opt <- opt %>% 
+  right_join(opt_prediction, by = "date_time") %>% 
+  mutate(station = "Old Port Tampa",
+         storm = "Eta")
+
+#port manatee
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20201109&end_date=20201115&station=8726384&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/portmanatee.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20201109&end_date=20201115&station=8726384&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/portmanatee_prediction.csv") 
+
+portmanatee <- read_csv("downloads/portmanatee.csv") %>% clean_names()
+
+portmanatee_prediction <- read_csv("downloads/portmanatee_prediction.csv") %>% clean_names()
+
+portmanatee <- portmanatee %>% 
+  right_join(portmanatee_prediction, by = "date_time") %>% 
+  mutate(station = "Port Manatee",
+         storm = "Eta")
+
+#Clearwater Beach
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20201109&end_date=20201115&station=8726724&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/clearwater.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20201109&end_date=20201115&station=8726724&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/clearwater_prediction.csv") 
+
+clearwater <- read_csv("downloads/clearwater.csv") %>% clean_names()
+
+clearwater_prediction <- read_csv("downloads/clearwater_prediction.csv") %>% clean_names()
+
+clearwater <- clearwater %>% 
+  right_join(clearwater_prediction, by = "date_time") %>% 
+  mutate(station = "Clearwater Beach",
+         storm = "Eta")
+
+#East Bay Tampa
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20201109&end_date=20201115&station=8726674&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/ebt.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20201109&end_date=20201115&station=8726674&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/ebt_prediction.csv") 
+
+ebt <- read_csv("downloads/ebt.csv") %>% clean_names()
+
+ebt_prediction <- read_csv("downloads/ebt_prediction.csv") %>% clean_names()
+
+ebt <- ebt %>% 
+  right_join(ebt_prediction, by = "date_time") %>% 
+  mutate(station = "East Bay Tampa",
+         storm = "Eta")
+
+#combine all gauge info
+
+eta <- bind_rows(stpete, opt, clearwater, ebt, portmanatee)
+
+#clean up
+
+rm(stpete, opt, clearwater, ebt, portmanatee, stpete_prediction, opt_prediction, clearwater_prediction, ebt_prediction, portmanatee_prediction)
+```
+
+```{r}
+#import tidal gauge data for eta
+
+#st pete
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20181007&end_date=20181013&station=8726520&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/stpete.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20181007&end_date=20181013&station=8726520&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/stpete_prediction.csv")
+
+stpete <- read_csv("downloads/stpete.csv") %>% clean_names()
+
+stpete_prediction <- read_csv("downloads/stpete_prediction.csv") %>% clean_names()
+
+stpete <- stpete %>% 
+  right_join(stpete_prediction, by = "date_time") %>% 
+  mutate(station = "St. Pete",
+         storm = "Michael")
+
+#old port tampa
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20181007&end_date=20181013&station=8726607&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/opt.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20181007&end_date=20181013&station=8726607&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/opt_prediction.csv")
+
+opt <- read_csv("downloads/opt.csv") %>% clean_names()
+
+opt_prediction <- read_csv("downloads/opt_prediction.csv") %>% clean_names()
+
+opt <- opt %>% 
+  right_join(opt_prediction, by = "date_time") %>% 
+  mutate(station = "Old Port Tampa",
+         storm = "Michael")
+
+#port manatee
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20181007&end_date=20181013&station=8726384&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/portmanatee.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20181007&end_date=20181013&station=8726384&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/portmanatee_prediction.csv") 
+
+portmanatee <- read_csv("downloads/portmanatee.csv") %>% clean_names()
+
+portmanatee_prediction <- read_csv("downloads/portmanatee_prediction.csv") %>% clean_names()
+
+portmanatee <- portmanatee %>% 
+  right_join(portmanatee_prediction, by = "date_time") %>% 
+  mutate(station = "Port Manatee",
+         storm = "Michael")
+
+#Clearwater Beach
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20181007&end_date=20181013&station=8726724&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/clearwater.csv")
+
+download.file("https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20181007&end_date=20181013&station=8726724&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv", destfile = "downloads/clearwater_prediction.csv") 
+
+clearwater <- read_csv("downloads/clearwater.csv") %>% clean_names()
+
+clearwater_prediction <- read_csv("downloads/clearwater_prediction.csv") %>% clean_names()
+
+clearwater <- clearwater %>% 
+  right_join(clearwater_prediction, by = "date_time") %>% 
+  mutate(station = "Clearwater Beach",
+         storm = "Michael")
+
+#East Bay Tampa data not available for this storm
+
+#combine all gauge info
+
+michael <- bind_rows(stpete, opt, clearwater, portmanatee)
+
+#clean up
+
+rm(stpete, opt, clearwater, portmanatee, stpete_prediction, opt_prediction, clearwater_prediction, portmanatee_prediction)
+
+```
+
+```{r}
+#largest surge predicted for Helene:
+
+helene %>% 
+  filter(is.na(water_level)) %>% 
+  arrange(desc(prediction))
+
+#around 8:12 am Thursday, expected 0.189 above MHHW at Port Manatee -- this isn't factoring in storm surge
+```
+
+
+```{r}
+#grab the highest water level, and station, from each storm. Then combine for a datawrapper chart
+
+# Get the names of all objects in the global environment
+obj_names <- ls()
+
+# Filter to include only data frames (assuming all objects are data frames)
+obj_names <- obj_names[sapply(obj_names, function(x) is.data.frame(get(x)))]
+
+# Initialize an empty list to store results
+results_list <- list()
+
+# Loop over each object name, apply the function, and store the result
+for (name in obj_names) {
+  data <- get(name) %>%
+    arrange(desc(water_level)) %>%
+    head(1)
+  
+  # Add the result to the list, named by the object name
+  results_list[[name]] <- data
+}
+
+# Combine the results into a new data frame
+results_df <- bind_rows(results_list, .id = "source")
+
+#calculate surge
+
+results_df <- results_df %>% 
+  mutate(difference = water_level-prediction)
+
+write_csv(results_df, "record_levels.csv")
+
+```
+
+
+
+```{r}
+#chart helene's current predictions
+
+helene %>% 
+  filter(station == "East Bay Tampa") %>% 
+  select(date_time, water_level, prediction) %>% 
+  pivot_longer(cols = c(water_level, prediction), 
+               names_to = "type",
+               values_to = "water_level") %>% 
+  ggplot(aes(x = date_time, y = water_level, color = type)) +
+  geom_line()
+
+helene %>% 
+  filter(station == "East Bay Tampa") %>% 
+  select(date_time, water_level, prediction) %>% 
+  mutate(difference = water_level - prediction) %>% 
+  arrange(desc(difference))
+
+#save:
+
+eastbay <- helene %>% 
+  filter(station == "East Bay Tampa") %>% 
+  select(date_time, water_level, prediction)
+
+write_csv(eastbay, "eastbay.csv")
+```
+
+```{r}
+helene %>% 
+  filter(station == "Clearwater Beach") %>% 
+  select(date_time, water_level, prediction) %>% 
+  pivot_longer(cols = c(water_level, prediction), 
+               names_to = "type",
+               values_to = "water_level") %>% 
+  ggplot(aes(x = date_time, y = water_level, color = type)) +
+  geom_line()
+
+#is this the highest Clearwater has ever had?
+
+helene %>% 
+  filter(station == "Clearwater Beach") %>% 
+  select(date_time, water_level, prediction) %>% 
+  mutate(difference = water_level - prediction) %>% 
+  arrange(desc(difference))
+
+idalia %>% 
+  filter(station == "Clearwater Beach") %>% 
+  select(date_time, water_level, prediction) %>% 
+  mutate(difference = water_level - prediction) %>% 
+  arrange(desc(difference))
+```
+#check to see if other monitors have peaked too
+
+```{r}
+helene %>% 
+  filter(station == "Old Port Tampa") %>% 
+  select(date_time, water_level, prediction) %>% 
+  pivot_longer(cols = c(water_level, prediction), 
+               names_to = "type",
+               values_to = "water_level") %>% 
+  ggplot(aes(x = date_time, y = water_level, color = type)) +
+  geom_line()
+
+#is this the highest Clearwater has ever had?
+
+helene %>% 
+  filter(station == "Old Port Tampa") %>% 
+  select(date_time, water_level, prediction) %>% 
+  mutate(difference = water_level - prediction) %>% 
+  arrange(desc(difference)) #6.528 surge
+
+ian %>% 
+  filter(station == "Old Port Tampa") %>% 
+  select(date_time, water_level, prediction) %>% 
+  mutate(difference = water_level - prediction) %>% 
+  arrange(desc(difference)) #idalia had 5.2
+```
+
+```{r}
+helene %>% 
+  filter(station == "Port Manatee") %>% 
+  select(date_time, water_level, prediction) %>% 
+  mutate(difference = water_level - prediction) %>% 
+  arrange(desc(difference)) #6.060 surge
+
+idalia %>% 
+  filter(station == "Port Manatee") %>% 
+  select(date_time, water_level, prediction) %>% 
+  mutate(difference = water_level - prediction) %>% 
+  arrange(desc(difference)) #idalia 4.494	
+```
+
+```{r}
+helene %>% 
+  filter(station == "St. Pete") %>% 
+  select(date_time, water_level, prediction) %>% 
+  mutate(difference = water_level - prediction) %>% 
+  arrange(desc(difference)) #6.202 surge
+
+december %>% 
+  filter(station == "St. Pete") %>% 
+  select(date_time, water_level, prediction) %>% 
+  mutate(difference = water_level - prediction) %>% 
+  arrange(desc(difference)) #idalia 4.6
+```
+```{r}
+#pull highest measurement from each station during helene
+
+helene_records <- helene %>% 
+  filter(!is.na(water_level)) %>% 
+  select(station, date_time, water_level, prediction) %>% 
+  mutate(difference = water_level - prediction) %>% 
+  group_by(station) %>% 
+  filter(difference == max(difference)) %>% 
+  ungroup()
+
+write_csv(helene_records, "helene_records.csv")
+```
+

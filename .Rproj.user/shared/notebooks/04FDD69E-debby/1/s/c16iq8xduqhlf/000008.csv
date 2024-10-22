@@ -1,0 +1,10 @@
+"0","```r
+
+december %>% 
+  filter(station == \"Clearwater Beach\") %>% 
+  select(date_time, prediction, water_level) %>% 
+  pivot_longer(cols = c(\"prediction\", \"water_level\"), names_to = \"type\", values_to = \"mhhw\") %>% 
+  filter(date_time >= \"2023-12-15 00:00:00\" & date_time <= \"2023-12-20 00:00:00\") %>% 
+  ggplot(aes(x = date_time, y = mhhw, color = type)) +
+    geom_line()
+```"

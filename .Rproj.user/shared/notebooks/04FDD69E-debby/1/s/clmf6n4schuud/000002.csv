@@ -1,0 +1,13 @@
+"0","```r
+summary(ian$water_level)
+```"
+"1","   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+-8.3460 -0.9480 -0.2070 -0.3928  0.3220  2.4250 
+"
+"0","```r
+#2.425 feet above MHHW at Clearwater Beach at 11:36 a.m. Aug. 30
+
+ian %>% 
+  filter(station == \"Old Port Tampa\") %>% 
+  arrange(desc(water_level))#1.893 at 2:36 p.m.
+```"

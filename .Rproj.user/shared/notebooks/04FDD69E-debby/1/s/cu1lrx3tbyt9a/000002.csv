@@ -1,0 +1,15 @@
+"0","```r
+#largest surge:
+
+summary(december$water_level)
+```"
+"1","   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+-4.1240 -1.3940 -0.7450 -0.7349 -0.1180  3.5990 
+"
+"0","```r
+#3.599 feet above MHHW at East Bay Tampa at 5:48 a.m. Dec. 17
+
+december %>% 
+  filter(station == \"St. Pete\") %>% 
+  arrange(desc(water_level)) #St. Pete high was 3.219	at 4:18 a.m.
+```"

@@ -1,0 +1,11 @@
+"0","```r
+#look at water levels after Ian to check river flowing back into bay
+
+ian %>% 
+  filter(station == \"East Bay Tampa\") %>% 
+  select(date_time, prediction, water_level) %>% 
+  filter(date_time >= \"2022-09-28 00:00:00\") %>% 
+  pivot_longer(cols = c(\"prediction\", \"water_level\"), names_to = \"type\", values_to = \"mhhw\") %>% 
+  ggplot(aes(x = date_time, y = mhhw, color = type)) +
+    geom_line()
+```"

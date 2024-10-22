@@ -1,0 +1,18 @@
+"0","december %>% 
+"
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","  filter(station == ""St. Pete"") %>% "
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","  select(date_time, water_level, prediction) %>% "
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","  mutate(difference = water_level - prediction) %>% "
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","  arrange(desc(difference)) #idalia 4.6"

@@ -1,0 +1,8 @@
+"0",""
+"0","#is this the highest Clearwater has ever had?"
+"0",""
+"0","helene %>% "
+"0","  filter(station == ""Old Port Tampa"") %>% "
+"0","  select(date_time, water_level, prediction) %>% "
+"0","  mutate(difference = water_level - prediction) %>% "
+"0","  arrange(desc(difference)) #6.528 surge"

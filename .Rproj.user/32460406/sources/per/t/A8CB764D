@@ -1,0 +1,28 @@
+{
+    "id": "A8CB764D",
+    "path": null,
+    "project_path": null,
+    "type": "object_explorer",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1727310211136.0,
+    "source_on_save": false,
+    "relative_order": 5,
+    "properties": {
+        "id": "b8e6a05ca65141ebb01731dba5c9ee8a",
+        "name": "gagenames",
+        "title": "gagenames",
+        "language": "R",
+        "source_window_id": "",
+        "Source": "Source"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 0,
+    "encoding": "",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1727310211136,
+    "read_only": false,
+    "read_only_alternatives": []
+}

@@ -1,0 +1,6 @@
+"0",""
+"0","ian %>% "
+"0","  filter(station == ""Old Port Tampa"") %>% "
+"0","  select(date_time, water_level, prediction) %>% "
+"0","  mutate(difference = water_level - prediction) %>% "
+"0","  arrange(desc(difference)) #idalia had 5.2"

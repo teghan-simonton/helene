@@ -1,0 +1,35 @@
+"0","#pull daily Q and summary averages. Want to be able to see if levels are above average and/or above highest percentile"
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","dailyQ <- read_csv(""dailyQ.csv"") %>% "
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","  rename(""average"" = `median(rollMean)`)"
+"2","[1mRows: [22m[34m17568[39m [1mColumns: [22m[34m3[39m"
+"2","[36m──[39m [1mColumn specification[22m [36m────────────────────────────────────────────────────────────────────────────────────────────────────────[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (1): site_no
+[32mdbl[39m (2): day.of.year, median(rollMean)"
+"2","
+[36mℹ[39m Use `spec()` to retrieve the full column specification for this data.
+[36mℹ[39m Specify the column types or set `show_col_types = FALSE` to quiet this message."
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"0","summaryQ <- read_csv(""summaryQ.csv"") "
+"2","[1mRows: [22m[34m17568[39m [1mColumns: [22m[34m7[39m"
+"2","[36m──[39m [1mColumn specification[22m [36m────────────────────────────────────────────────────────────────────────────────────────────────────────[39m
+[1mDelimiter:[22m "",""
+[31mchr[39m (1): site_no
+[32mdbl[39m (6): day.of.year, p75, p25, p10, p05, p00"
+"2","
+[36mℹ[39m Use `spec()` to retrieve the full column specification for this data.
+[36mℹ[39m Specify the column types or set `show_col_types = FALSE` to quiet this message."
+"2","Error in exists(cacheKey, where = .rs.WorkingDataEnv, inherits = FALSE) : 
+  invalid first argument
+"
+"2","Error in assign(cacheKey, frame, .rs.CachedDataEnv) : 
+  attempt to use zero-length variable name
+"

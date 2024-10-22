@@ -1,0 +1,269 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+```{r}
+#install.packages("dataRetrieval")
+library(tidyverse)
+library(lubridate)
+library(ggplot2)
+library(dataRetrieval)
+library(sf)
+library(mapview)
+
+library(remotes)
+#install_github("DOI-USGS/dataRetrieval",
+               #build_vignettes = TRUE, 
+               #build_opts = c("--no-resave-data",
+                             # "--no-manual"))
+
+options(scipen = 999)
+```
+
+```{r}
+### dataframe of available sites
+florida_sites <- whatNWISsites(stateCd = "FL", parameterCd = "00065") %>%
+  st_as_sf(coords=c("dec_long_va","dec_lat_va"),
+           crs=4326) 
+```
+
+```{r}
+#list all gages we need for this project. I'm basically pulling everything I can find. May need to get more once we know what regions to focus in?
+
+gagenames <- c("02299950", "02300033", "02300042", "02300075", "02308950", "02308889", "02308889", "02308861", "02307780", "02309110", "02309200", "02307668", "02307669", "02307674", "02309415", "02309421", "02309425", "02309447", "02307496", "02307445", "02307362", "02307359", "02307032", "02307000", "02306647", "023066535", "02306500", "02306774", "02306950", "280311082282601", "02305851", "02306000", "02304000", "02304500", "02301750", "02301740", "02303205", "02301500", "02300700", "02301300", "02310000", "02310300", "02310322", "02309740", "02309848", "02310288", "02310356", "02310280", "02298608")
+
+```
+
+```{r}
+
+
+# Initialize a list to store results for each site
+summaryQ_list <- list()
+dailyQ_list <- list()
+
+# Define your moving average function
+ma <- function(x, n=30) {
+  if(length(x) < n) {
+    return(rep(NA, length(x)))  # Return NA if not enough data points
+  } else {
+    return(stats::filter(x, rep(1/n, n), sides=1))
+  }
+}
+
+# Loop through each site number
+for (i in gagenames) {
+  
+  # Retrieve daily Q data for the current site
+  dailyQ <- readNWISdv(i, "00065")  #gage height
+  dailyQ <- renameNWISColumns(dailyQ)
+  
+  # Retrieve station information (optional, if needed)
+  stationInfo <- readNWISsite(i)
+  
+  # Calculate the rolling mean and add day of the year
+  dailyQ <- dailyQ %>%
+    mutate(rollMean = as.numeric(ma(GH)),  # Adjust 'GH' to the correct column if needed
+           day.of.year = as.numeric(strftime(Date, format="%j")))
+  
+  # Summarize the data by day of the year
+  summaryQ <- dailyQ %>%
+    group_by(day.of.year) %>%
+    summarize(p75 = quantile(rollMean, probs = .75, na.rm = TRUE),
+              p25 = quantile(rollMean, probs = .25, na.rm = TRUE),
+              p10 = quantile(rollMean, probs = 0.1, na.rm = TRUE),
+              p05 = quantile(rollMean, probs = 0.05, na.rm = TRUE),
+              p00 = quantile(rollMean, probs = 0, na.rm = TRUE))
+  
+  dailyQ <- dailyQ %>% 
+    filter(!is.na(rollMean)) %>% 
+    group_by(day.of.year) %>% 
+    summarise(median(rollMean))
+  
+  # Store the summaryQ result in the list, with site number as the name
+  summaryQ_list[[i]] <- summaryQ
+  
+  # Store the dailyQ result in the list, with site number as the name
+  dailyQ_list[[i]] <- dailyQ
+}
+
+
+```
+
+
+```{r}
+#idalia data - Aug 28, 2023 Sept. 3, 2023
+
+startDate <- "2023-08-28"
+endDate <- "2023-09-03"
+
+idalia <- readNWISdata(sites = gagenames,
+                            service = "iv", 
+                            ### param for gage height - feet
+                            parameterCd = "00065", 
+                            startDate = startDate,
+                            endDate = endDate) 
+
+```
+
+```{r}
+#ian data - Sept. 25, 2022 to Oct. 2, 2022
+
+startDate <- "2022-09-25"
+endDate <- "2022-10-02"
+
+ian <- readNWISdata(sites = gagenames,
+                            service = "iv", 
+                            ### param for gage height - feet
+                            parameterCd = "00065", 
+                            startDate = startDate,
+                            endDate = endDate) 
+```
+
+```{r}
+#eta data - Nov. 9 - Nov. 15, 2020
+
+startDate <- "2020-11-09"
+endDate <- "2020-11-15"
+
+eta <- readNWISdata(sites = gagenames,
+                            service = "iv", 
+                            ### param for gage height - feet
+                            parameterCd = "00065", 
+                            startDate = startDate,
+                            endDate = endDate) 
+
+```
+
+```{r}
+#michael data - Oct. 7 - Oct. 13 2018
+
+startDate <- "2018-10-07"
+endDate <- "2018-10-13"
+
+michael <- readNWISdata(sites = gagenames,
+                            service = "iv", 
+                            ### param for gage height - feet
+                            parameterCd = "00065", 
+                            startDate = startDate,
+                            endDate = endDate) 
+```
+
+```{r}
+#debby data - Aug. 1 to Aug 7, 2024
+
+startDate <- "2024-08-01"
+endDate <- "2024-08-07"
+
+debby <- readNWISdata(sites = gagenames,
+                            service = "iv", 
+                            ### param for gage height - feet
+                            parameterCd = "00065", 
+                            startDate = startDate,
+                            endDate = endDate) 
+
+```
+
+```{r}
+#december storm data - Dec. 15 - Dec. 22, 2023
+
+startDate <- "2023-12-15"
+endDate <- "2023-12-22"
+
+dec <- readNWISdata(sites = gagenames,
+                            service = "iv", 
+                            ### param for gage height - feet
+                            parameterCd = "00065", 
+                            startDate = startDate,
+                            endDate = endDate) 
+```
+
+```{r}
+#grab the highest water level, and station, from each storm. Then combine for a datawrapper chart
+
+# List of object names you want to select
+wanted_objects <- c("idalia", "eta", "ian", "michael", "dec", "debby")
+
+# Filter the list of all objects in the environment to match these names
+selected_objects <- mget(wanted_objects, envir = .GlobalEnv, ifnotfound = NA)
+
+# Remove any objects that were not found (optional)
+selected_objects <- selected_objects[!sapply(selected_objects, is.null)]
+
+# Initialize an empty list to store results
+results_list <- list()
+
+# Loop over each object, apply the function, and store the result
+for (name in names(selected_objects)) {
+  data <- selected_objects[[name]] %>%
+    group_by(site_no) %>% 
+    arrange(desc(X_00065_00000)) %>%
+    slice_head(n = 1)
+  
+  # Add the result to the list, named by the object name
+  results_list[[name]] <- data
+}
+
+# Combine the results into a new data frame
+results_df <- bind_rows(results_list, .id = "source")
+
+```
+
+```{r}
+#Calculate river surge at each of these stations based on summaryQ list.
+
+#first, identify day.of.year for each of these measurements
+results_df <- results_df %>% 
+  mutate(day.of.year = as.numeric(strftime(dateTime, format="%j")))
+
+`
+# make lists into data frames
+for (id in names(summaryQ_list)) {
+  summaryQ_list[[id]] <- summaryQ_list[[id]] %>%
+    mutate(site_no = id) # Replace id_number with the name of the field you want to add
+}
+
+# Bind all data frames into one large data frame
+summaryQ <- bind_rows(summaryQ_list)
+
+#check
+summaryQ %>% 
+  count(site_no) #should return 48
+
+#dailyQ
+
+for (id in names(dailyQ_list)) {
+  dailyQ_list[[id]] <- dailyQ_list[[id]] %>%
+    mutate(site_no = id) # Replace id_number with the name of the field you want to add
+}
+
+# Bind all data frames into one large data frame
+dailyQ <- bind_rows(dailyQ_list)
+
+#check
+dailyQ %>% 
+  count(site_no)
+
+#grab p75 and match to the highest measurement for each station, joining on day of year and site_no. Then estimate surge by calculating difference between the actual measurement and a high daily average
+results_df %>% 
+  left_join(dailyQ, by = c("site_no", "day.of.year")) %>% distinct() %>% 
+  mutate(difference = X_00065_00000-`median(rollMean)`)
+
+```
+
+
+
+```{r}
+#pull dailyQ averages
+
+write_csv(dailyQ, "dailyQ.csv")
+write_csv(summaryQ, "summaryQ.csv")
+```
+
+
+
+
+
+
+
+

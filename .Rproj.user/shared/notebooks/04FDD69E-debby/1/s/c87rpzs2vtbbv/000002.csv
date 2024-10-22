@@ -1,0 +1,15 @@
+"0","```r
+#largest surge:
+
+summary(idalia$water_level)
+```"
+"1","   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+-2.6410 -1.0100 -0.4100 -0.4032  0.0950  4.5640 
+"
+"0","```r
+#4.564 feet above MHHW at East Bay Tampa at 7:30 a.m. Aug. 30
+
+idalia %>% 
+  filter(station == \"Old Port Tampa\") %>% 
+  arrange(desc(water_level))#4.18 at 6:30
+```"

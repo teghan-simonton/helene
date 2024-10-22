@@ -1,0 +1,29 @@
+"0","```r
+#Port Manatee
+
+portmanatee <- read_csv(\"https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240705&end_date=20240805&station=8726384&product=water_level&datum=MHHW&time_zone=lst_ldt&units=english&format=csv\") %>% clean_names()
+```"
+"1","Rows: 7606 Columns: 8── Column specification ──────────────────────────────────────────────────────────────────────
+Delimiter: \",\"
+chr  (1): Quality
+dbl  (6): Water Level, Sigma, O or I (for verified), F, R, L
+dttm (1): Date Time
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"
+"0","```r
+portmanatee_prediction <- read_csv(\"https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?begin_date=20240705&end_date=20240805&station=8726384&product=predictions&datum=MHHW&time_zone=lst_ldt&units=english&format=csv\") %>% clean_names()
+```"
+"1","Rows: 7680 Columns: 2── Column specification ──────────────────────────────────────────────────────────────────────
+Delimiter: \",\"
+dbl  (1): Prediction
+dttm (1): Date Time
+ℹ Use `spec()` to retrieve the full column specification for this data.
+ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.
+"
+"0","```r
+portmanatee <- portmanatee %>% 
+  right_join(portmanatee_prediction, by = \"date_time\") %>% 
+  mutate(station = \"Port Manatee\",
+         storm = \"Debby\")
+```"

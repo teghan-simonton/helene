@@ -1,0 +1,4 @@
+"0","### dataframe of available sites"
+"0","florida_sites <- whatNWISsites(stateCd = ""FL"", parameterCd = ""00065"") %>%"
+"0","  st_as_sf(coords=c(""dec_long_va"",""dec_lat_va""),"
+"0","           crs=4326) "

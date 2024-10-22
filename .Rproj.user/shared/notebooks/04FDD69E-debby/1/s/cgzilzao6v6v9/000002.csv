@@ -1,0 +1,15 @@
+"0","```r
+#largest surge so far with Debby:
+
+summary(debby$water_level)
+```"
+"1","   Min. 1st Qu.  Median    Mean 3rd Qu.    Max.    NA's 
+-3.0150 -1.0530 -0.4560 -0.4476  0.0890  2.9720     390 
+"
+"0","```r
+#2.972 feet above MHHW (or the baseline water height), which occurred at 4 a.m. this morning at Old Port Tampa.
+
+debby %>% 
+  filter(station == \"St. Pete\") %>% 
+  arrange(desc(water_level)) #St. Pete high was 2.621	at 4:18 this morning
+```"

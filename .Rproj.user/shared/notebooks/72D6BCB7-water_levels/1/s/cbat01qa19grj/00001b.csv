@@ -1,0 +1,41 @@
+"0","# Loop through each site number
+for (i in gagenames) {
+  
+  # Retrieve daily Q data for the current site
+  dailyQ <- readNWISdv(i, ""00065"")  #gage height
+  dailyQ <- renameNWISColumns(dailyQ)
+  
+  # Retrieve station information (optional, if needed)
+  stationInfo <- readNWISsite(i)
+  
+  # Calculate the rolling mean and add day of the year
+  dailyQ <- dailyQ %>%
+    mutate(rollMean = as.numeric(ma(GH)),  # Adjust 'GH' to the correct column if needed
+           day.of.year = as.numeric(strftime(Date, format=""%j"")))
+  
+  # Summarize the data by day of the year
+  summaryQ <- dailyQ %>%
+    group_by(day.of.year) %>%
+    summarize(p75 = quantile(rollMean, probs = .75, na.rm = TRUE),
+              p25 = quantile(rollMean, probs = .25, na.rm = TRUE),
+              p10 = quantile(rollMean, probs = 0.1, na.rm = TRUE),
+              p05 = quantile(rollMean, probs = 0.05, na.rm = TRUE),
+              p00 = quantile(rollMean, probs = 0, na.rm = TRUE))
+  
+  dailyQ <- dailyQ %>% 
+    filter(!is.na(rollMean)) %>% 
+    group_by(day.of.year) %>% 
+    summarise(median(rollMean))
+  
+  # Store the summaryQ result in the list, with site number as the name
+  summaryQ_list[[i]] <- summaryQ
+  
+  # Store the dailyQ result in the list, with site number as the name
+  dailyQ_list[[i]] <- dailyQ
+}
+"
+"2","No internet connection.
+"
+"2","Error in UseMethod(""xml_find_all"") : 
+  no applicable method for 'xml_find_all' applied to an object of class ""NULL""
+"

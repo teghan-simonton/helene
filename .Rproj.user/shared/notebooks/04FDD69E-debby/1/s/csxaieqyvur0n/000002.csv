@@ -1,0 +1,27 @@
+"0","```r
+#grab the highest water level, and station, from each storm. Then combine for a datawrapper chart
+
+# Get the names of all objects in the global environment
+obj_names <- ls()
+
+# Filter to include only data frames (assuming all objects are data frames)
+obj_names <- obj_names[sapply(obj_names, function(x) is.data.frame(get(x)))]
+
+# Initialize an empty list to store results
+results_list <- list()
+
+# Loop over each object name, apply the function, and store the result
+for (name in obj_names) {
+  data <- get(name) %>%
+    arrange(desc(water_level)) %>%
+    head(1)
+  
+  # Add the result to the list, named by the object name
+  results_list[[name]] <- data
+}
+
+# Combine the results into a new data frame
+results_df <- bind_rows(results_list, .id = \"source\")
+
+
+```"
